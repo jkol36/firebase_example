@@ -1,14 +1,20 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import * as firebase from 'firebase';
 import Input from './components/input';
 import Button from './components/button';
 
 export default class App extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.onPressSignin = this.onPressSignin.bind(this)
+  }
+
   state = {
     email: '',
-    password: ''
+    password: '',
+    authenticating: false,
   }
 
   componentWillMount() {
@@ -20,9 +26,22 @@ export default class App extends React.Component {
     firebase.initializeApp(firebaseConfig);
   }
 
-  render() {
+  onPressSignin() {
+    this.setState({
+      authenticating:true
+    })
+  }
+
+  renderCurrentState() {
+    if(this.state.authenticating) {
+      return (
+        <View style={styles.form}> 
+          <ActivityIndicator size='large' />
+        </View>
+        )
+    }
     return (
-      <View style={styles.container}>
+      <View style={styles.form}>
         <Input 
           placeholder={"Enter your email"}
           label={"Email"}
@@ -38,15 +57,29 @@ export default class App extends React.Component {
         />
 
         <Button
-          onPress={() => console.log('im pressed')}
+          onPress={this.onPressSignin}
         > Log In </Button>
       </View>
+    )
+  }
+
+  render() {
+    return (
+    <View style={styles.container}>
+      {this.renderCurrentState()}
+    </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    alignItems:'center',
+    'justifyContent':'center',
+    flexDirection:'row',
   },
+  form: {
+    flex: 1
+  }
 });
