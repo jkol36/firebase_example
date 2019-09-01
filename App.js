@@ -111,6 +111,7 @@ export default class App extends React.Component {
         return (
           <View style={styles.form}>
             <Text style={styles.text}> Welcome! </Text>
+            <Text style={styles.message}> {this.state.message} </Text>
             <Input 
               placeholder={"Enter your email"}
               label={"Email"}
@@ -185,6 +186,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color:'white',
     fontSize:18
+  },
+  message: {
+    color:'orange',
+    fontSize: 18,
+    alignItems:'center',
   }
 });
 
