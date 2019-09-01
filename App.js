@@ -42,6 +42,7 @@ export default class App extends React.Component {
     }
     return (
       <View style={styles.form}>
+        <Text style={styles.text}> Welcome! </Text>
         <Input 
           placeholder={"Enter your email"}
           label={"Email"}
@@ -80,6 +81,12 @@ const styles = StyleSheet.create({
     flexDirection:'row',
   },
   form: {
-    flex: 1
+    flex: 1,
+    marginRight:10,
+    marginLeft:10
+  },
+  text: {
+    fontSize:70,
+    fontWeight: '700'
   }
 });
