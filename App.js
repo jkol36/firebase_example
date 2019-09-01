@@ -9,13 +9,14 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.onPressSignin = this.onPressSignin.bind(this)
+    this.onPressSignUp = this.onPressSignUp.bind(this)
   }
 
   state = {
     email: '',
     password: '',
     authenticating: false,
-    error:null,
+    error:false,
     message:''
   }
 
@@ -40,6 +41,33 @@ export default class App extends React.Component {
         authenticating:false
       })
     })
+    .then(() => {
+      this.setState({
+        error: false,
+        message: 'You have logged in!',
+        authenticating: false
+      })
+    })
+  }
+  onPressSignUp() {
+    this.setState({
+      authenticating:true
+    });
+    firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+    .catch(error => {
+      this.setState({
+        error:true,
+        message:error.message,
+        authenticating:false
+      })
+    })
+    .then(res => {
+      this.setState({
+        error:false,
+        message: 'You have successfully signed up!',
+        authenticating: false
+      })
+    })
   }
 
   renderCurrentState() {
@@ -50,15 +78,15 @@ export default class App extends React.Component {
         </View>
         )
     }
-    else if(this.state.error) {
+    else if(this.state.error === true) {
       return(
         <View style={styles.form}> 
           <Text style={styles.error}> {this.state.message} </Text>
             <Input 
-            placeholder={"Enter your email"}
-            label={"Email"}
-            onChangeText={email => this.setState({email})}
-            value={this.state.email}
+              placeholder={"Enter your email"}
+              label={"Email"}
+              onChangeText={email => this.setState({email})}
+              value={this.state.email}
           />
           <Input 
             placeholder={"Enter your password"}
@@ -71,32 +99,44 @@ export default class App extends React.Component {
           <Button
             onPress={this.onPressSignin}
           > Log In </Button>
+          <Button
+            style={styles.button}
+            onPress={this.onPressSignUp}
+          > Sign Up </Button>
         </View>
       )
       
     }
-    return (
-      <View style={styles.form}>
-        <Text style={styles.text}> Welcome! </Text>
-        <Input 
-          placeholder={"Enter your email"}
-          label={"Email"}
-          onChangeText={email => this.setState({email})}
-          value={this.state.email}
-        />
-        <Input 
-          placeholder={"Enter your password"}
-          label={"Password"}
-          secureTextEntry
-          onChangeText={password => this.setState({password})}
-          value={this.state.password}
-        />
+    else {
+        return (
+          <View style={styles.form}>
+            <Text style={styles.text}> Welcome! </Text>
+            <Input 
+              placeholder={"Enter your email"}
+              label={"Email"}
+              onChangeText={email => this.setState({email})}
+              value={this.state.email}
+            />
+            <Input 
+              placeholder={"Enter your password"}
+              label={"Password"}
+              secureTextEntry
+              onChangeText={password => this.setState({password})}
+              value={this.state.password}
+            />
 
-        <Button
-          onPress={this.onPressSignin}
-        > Log In </Button>
-      </View>
-    )
+            <Button
+              styles={styles}
+              onPress={this.onPressSignin}
+            > Log In </Button>
+            <Button
+                styles={styles}
+                onPress={this.onPressSignUp}
+              > Sign Up </Button>
+          </View>
+        )
+
+    }
   }
 
   render() {
@@ -127,5 +167,24 @@ const styles = StyleSheet.create({
   error: {
     fontSize:18,
     color:'red',
+  },
+  button: {
+    marginTop:10,
+    padding:20,
+    width:'100%',
+    backgroundColor:'green',
+    borderRadius:4,
+    alignItems: 'center',
+  },
+  text: {
+    color: 'black',
+    alignItems:'center',
+    fontWeight: '700',
+    fontSize: 40,
+  },
+  buttonText: {
+    color:'white',
+    fontSize:18
   }
 });
+
