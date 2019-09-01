@@ -15,6 +15,8 @@ export default class App extends React.Component {
     email: '',
     password: '',
     authenticating: false,
+    error:null,
+    message:''
   }
 
   componentWillMount() {
@@ -29,6 +31,14 @@ export default class App extends React.Component {
   onPressSignin() {
     this.setState({
       authenticating:true
+    });
+    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+    .catch(error => {
+      this.setState({
+        error:true,
+        message:error.message,
+        authenticating:false
+      })
     })
   }
 
@@ -39,6 +49,31 @@ export default class App extends React.Component {
           <ActivityIndicator size='large' />
         </View>
         )
+    }
+    else if(this.state.error) {
+      return(
+        <View style={styles.form}> 
+          <Text style={styles.error}> {this.state.message} </Text>
+            <Input 
+            placeholder={"Enter your email"}
+            label={"Email"}
+            onChangeText={email => this.setState({email})}
+            value={this.state.email}
+          />
+          <Input 
+            placeholder={"Enter your password"}
+            label={"Password"}
+            secureTextEntry
+            onChangeText={password => this.setState({password})}
+            value={this.state.password}
+          />
+
+          <Button
+            onPress={this.onPressSignin}
+          > Log In </Button>
+        </View>
+      )
+      
     }
     return (
       <View style={styles.form}>
@@ -88,5 +123,9 @@ const styles = StyleSheet.create({
   text: {
     fontSize:70,
     fontWeight: '700'
+  },
+  error: {
+    fontSize:18,
+    color:'red',
   }
 });
